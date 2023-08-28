@@ -7,6 +7,7 @@ import { FaUser } from 'react-icons/fa';
 
 // Components
 import Header from '../components/Header';
+import Spinner from '../components/Spinner';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -59,6 +60,10 @@ function Register() {
       dispatch(register(userData));
     }
   };
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="container">
