@@ -13,6 +13,7 @@ import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import NewTicket from './pages/NewTicket';
+import Tickets from './pages/Tickets';
 
 const Routes = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +23,9 @@ const Routes = createBrowserRouter(
       <Route path="/login" element={<Login />}></Route>
       <Route path="/new-ticket" element={<PrivateRoute />}>
         <Route path="/new-ticket" element={<NewTicket />} />
+      </Route>
+      <Route path="/tickets" element={<PrivateRoute />}>
+        <Route path="/tickets" element={<Tickets />} />
       </Route>
     </>
   )
