@@ -6,7 +6,11 @@ import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { getTicket, closeTicket } from '../features/ticketSlice';
-import { getNotes, reset as notesReset } from '../features/noteSlice';
+import {
+  getNotes,
+  reset as notesReset,
+  createNote,
+} from '../features/noteSlice';
 
 // Components
 import Header from '../components/Header';
@@ -65,7 +69,7 @@ function Ticket() {
   // Create note submit
   const onNoteSubmit = (e) => {
     e.preventDefault();
-    console.log('Submit');
+    dispatch(createNote({ noteText, ticketId }));
     closeModal();
   };
 
