@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getTickets, reset } from '../features/ticketSlice';
+import { getTickets } from '../features/ticketSlice';
 
 // Components
 import Header from '../components/Header';
@@ -9,25 +9,20 @@ import BackButton from '../components/BackButton';
 import TicketItem from '../components/TicketItem';
 
 function Tickets() {
-  const { tickets, isLoading, isSuccess } = useSelector(
-    (state) => state.tickets
-  );
+  const { tickets } = useSelector((state) => state.tickets);
 
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    return () => {
-      if (isSuccess) {
-        dispatch(reset());
-      }
-    };
-  }, [dispatch, isSuccess]);
+  // NOTE: only need one useEffect here
 
   useEffect(() => {
     dispatch(getTickets());
   }, [dispatch]);
 
-  if (isLoading) {
+  // NOTE: no need for loading state, we can check for absence of tickets
+  // If we don't have tickets we are loading, if we do have tickets we just
+  // need to update the tickets with latest tickets in the background
+  if (!tickets) {
     return <Spinner />;
   }
 
@@ -43,10 +38,9 @@ function Tickets() {
           <div>Status</div>
           <div></div>
         </div>
-        {tickets &&
-          tickets.map((ticket) => (
-            <TicketItem key={ticket._id} ticket={ticket} />
-          ))}
+        {tickets?.map((ticket) => (
+          <TicketItem key={ticket._id} ticket={ticket} />
+        ))}
       </div>
     </div>
   );

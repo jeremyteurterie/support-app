@@ -6,11 +6,7 @@ import { toast } from 'react-toastify';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { getTicket, closeTicket } from '../features/ticketSlice';
-import {
-  getNotes,
-  reset as notesReset,
-  createNote,
-} from '../features/noteSlice';
+import { getNotes, createNote } from '../features/noteSlice';
 
 // Components
 import Header from '../components/Header';
@@ -36,53 +32,53 @@ Modal.setAppElement('#root');
 function Ticket() {
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [noteText, setNoteText] = useState('');
-  const { ticket, isLoading, isSuccess, isError, message } = useSelector(
-    (state) => state.tickets
-  );
+  const { ticket } = useSelector((state) => state.tickets);
 
-  const { notes, isLoading: notesIsLoading } = useSelector(
-    (state) => state.notes
-  );
+  const { notes } = useSelector((state) => state.notes);
 
+  // NOTE: no need for two useParams
+  // const params = useParams()
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const params = useParams();
   const { ticketId } = useParams();
 
   useEffect(() => {
-    if (isError) {
-      toast.error(message);
-    }
-
-    dispatch(getTicket(ticketId));
-    dispatch(getNotes(ticketId));
-    // eslint-disabled-next-line
-  }, [isError, message, ticketId]);
+    dispatch(getTicket(ticketId)).unwrap().catch(toast.error);
+    dispatch(getNotes(ticketId)).unwrap().catch(toast.error);
+  }, [ticketId, dispatch]);
 
   // Close ticket
   const onTicketClose = () => {
-    dispatch(closeTicket(ticketId));
-    toast.success('Ticket Closed');
-    navigate('/tickets');
+    // NOTE: we can unwrap our AsyncThunkACtion here so no need for isError and
+    // isSuccess state
+    dispatch(closeTicket(ticketId))
+      .unwrap()
+      .then(() => {
+        toast.success('Ticket Closed');
+        navigate('/tickets');
+      })
+      .catch(toast.error);
   };
 
   // Create note submit
   const onNoteSubmit = (e) => {
-    e.preventDefault();
-    dispatch(createNote({ noteText, ticketId }));
-    closeModal();
+    // NOTE: we can unwrap our AsyncThunkACtion here so no need for isError and
+    // isSuccess state
+    dispatch(createNote({ noteText, ticketId }))
+      .unwrap()
+      .then(() => {
+        setNoteText('');
+        closeModal();
+      })
+      .catch(toast.error);
   };
 
-  // Open/Close modal
+  // Open/close modal
   const openModal = () => setModalIsOpen(true);
   const closeModal = () => setModalIsOpen(false);
 
-  if (isLoading || notesIsLoading) {
+  if (!ticket) {
     return <Spinner />;
-  }
-
-  if (isError) {
-    return <h3>Somethings Went Wrong</h3>;
   }
 
   return (
@@ -145,7 +141,7 @@ function Ticket() {
           </form>
         </Modal>
 
-        {notes.map((note) => (
+        {notes?.map((note) => (
           <NoteItem key={note._id} note={note} />
         ))}
 
