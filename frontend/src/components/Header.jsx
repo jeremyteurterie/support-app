@@ -17,7 +17,7 @@ function Header() {
   return (
     <header className="header">
       <div className="logo">
-        <Link to="/">Support Center</Link>
+        <Link to="/">Support App</Link>
       </div>
       <ul>
         {user ? (
