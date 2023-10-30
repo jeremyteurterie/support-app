@@ -47,21 +47,4 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(errorHandler);
 
-// app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
-if (typeof(PhusionPassenger) !== 'undefined') {
-  PhusionPassenger.configure({ autoInstall: false });
-}
-
-app.get('/', function(req, res) {
-  var body = 'Hello World';
-  res.setHeader('Content-Type', 'text/plain');
-  res.setHeader('Content-Length', body.length);
-  res.end(body);
-});
-
-if (typeof(PhusionPassenger) !== 'undefined') {
-  app.listen('passenger');
-} else {
-  app.listen(4000);
-}
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
